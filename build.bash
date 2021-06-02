@@ -28,7 +28,7 @@ do
     fi  
     
     echo $output_name
-    env GOOS=$GOOS GOARCH=$GOARCH $SCRIPT_DIR/go/bin/go build -o $SCRIPT_DIR/output/$output_name main.go
+    env GOOS=$GOOS GOARCH=$GOARCH $SCRIPT_DIR/go/bin/go build -o $SCRIPT_DIR/output/$output_name
     if [ $? -ne 0 ]; then
         echo 'An error has occurred! Aborting the script execution...'
         exit 1

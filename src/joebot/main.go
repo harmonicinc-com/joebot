@@ -1,10 +1,8 @@
-//go:generate go get github.com/UnnoTed/fileb0x
-//go:generate go run github.com/UnnoTed/fileb0x joebot-html.json
-
 package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -12,7 +10,6 @@ import (
 	"sync"
 
 	"github.com/harmonicinc-com/joebot/client"
-	"github.com/harmonicinc-com/joebot/joebot_html"
 	"github.com/harmonicinc-com/joebot/models"
 	"github.com/harmonicinc-com/joebot/server"
 
@@ -60,19 +57,26 @@ func main() {
 				return false, nil
 			}))
 		}
+		webPortalAssetsFS := WebPortalAssetsFS()
 
 		v1.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 			AllowOrigins: []string{"*"},
 			AllowMethods: []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
 		}))
 		e.GET("/", func(c echo.Context) error {
-			b, err := joebot_html.ReadFile("index.html")
+			f, err := webPortalAssetsFS.Open("index.html")
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer f.Close()
+			b, err := ioutil.ReadAll(f)
 			if err != nil {
 				log.Fatal(err)
 			}
 			return c.HTML(200, string(b))
 		})
-		e.GET("/*", echo.WrapHandler(joebot_html.Handler))
+		// e.GET("/*", echo.WrapHandler(joebot_html.Handler))
+		e.GET("/*", echo.WrapHandler(http.FileServer(http.FS(webPortalAssetsFS))))
 		v1.GET("/clients", func(c echo.Context) error {
 			return c.JSON(http.StatusOK, s.GetClientsList())
 		})
