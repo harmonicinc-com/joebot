@@ -12,7 +12,7 @@ echo "Building joebot..."
 platforms=("windows/amd64" "linux/amd64" "darwin/amd64")
 
 echo "Building and embeding HTML resource"
-pushd src/joebot
+pushd $SCRIPT_DIR/src/joebot
 $SCRIPT_DIR/go/bin/go generate
 
 echo "Start cross-compilation"
