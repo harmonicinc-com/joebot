@@ -170,12 +170,12 @@ func (client *Client) Stop() {
 	client.gostTunnels = []*gost.Server{}
 
 	if client.novncWebsocketServer != nil {
-		client.novncWebsocketServer.Shutdown(nil)
+		client.novncWebsocketServer.Shutdown(context.Background())
 		client.novncWebsocketServer = nil
 	}
 
 	if client.filebrowserServer != nil {
-		client.filebrowserServer.Shutdown(nil)
+		client.filebrowserServer.Shutdown(context.Background())
 		client.filebrowserServer = nil
 	}
 
